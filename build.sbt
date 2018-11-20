@@ -6,6 +6,13 @@ lazy val `base_clean` = (project in file(".")).enablePlugins(PlayScala)
                                               .aggregate(configuration, core, dataproviders, entrypoints)
                                               .dependsOn(configuration)
 
+resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
+resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
+scalaVersion := "2.12.2"
+libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice )
+
+unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
+
 lazy val commonSettings = Seq(
   scalaVersion := "2.12.2",
   scalaSource in Compile := baseDirectory.value / "src" / "main" / "scala",
@@ -101,13 +108,5 @@ lazy val entrypoints =
     .dependsOn(core)
     .settings(commonSettings)
     .settings(entryPointsSetting)
-
-
-resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
-resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
-scalaVersion := "2.12.2"
-libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice )
-
-unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
 
 //flywayLocations := Seq("filesystem:port/secondary/database/src/main/resources/db/migration/default")
