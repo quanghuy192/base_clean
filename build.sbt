@@ -25,7 +25,6 @@ lazy val commonSettings = Seq(
     specs2 % Test,
     "ch.qos.logback" % "logback-classic" % "1.1.+",
     "com.github.maricn" % "logback-slack-appender" % "1.3.0",
-    "mysql" % "mysql-connector-java" % "5.1.44",
     "org.apache.velocity" % "velocity" % "1.7",
     "com.github.tototoshi" %% "scala-csv" % "1.3.5"
   )
@@ -35,6 +34,7 @@ lazy val dataProvidersSetting = Seq(
   libraryDependencies ++= Seq(
     "org.skinny-framework" %% "skinny-orm" % "2.3.7",
     "org.flywaydb" %% "flyway-play" % "4.0.0",
+    "mysql" % "mysql-connector-java" % "5.1.44",
     "org.scalikejdbc" %% "scalikejdbc" % "3.0.2",
     "org.scalikejdbc" %% "scalikejdbc-config" % "3.0.2",
     "org.scalikejdbc" %% "scalikejdbc-play-initializer" % "2.6.0-scalikejdbc-3.0"
@@ -77,6 +77,11 @@ lazy val coreSetting = Seq(
   )
 )
 
+lazy val utilSetting = Seq(
+  libraryDependencies ++= Seq(
+  )
+)
+
 lazy val configuration =
   (project in file("application/configuration"))
     .enablePlugins(PlayScala)
@@ -93,7 +98,6 @@ lazy val configuration =
 lazy val core =
   Project(id = "core", base = file("application/core"))
     .enablePlugins(PlayScala)
-    .dependsOn(dataproviders)
     .settings(commonSettings)
     .settings(coreSetting)
 
@@ -101,6 +105,7 @@ lazy val dataproviders =
   Project(id = "dataproviders", base = file("application/dataproviders"))
     .settings(commonSettings)
     .settings(dataProvidersSetting)
+    .dependsOn(core)
 
 lazy val entrypoints =
   Project(id = "entrypoints", base = file("application/entrypoints"))
@@ -108,5 +113,19 @@ lazy val entrypoints =
     .dependsOn(core)
     .settings(commonSettings)
     .settings(entryPointsSetting)
+
+lazy val util =
+  (project in file("application/utils"))
+    .enablePlugins(PlayScala)
+    .dependsOn(
+      dataproviders,
+      entrypoints
+    )
+    .settings(commonSettings)
+    .settings(utilSetting)
+    .settings(libraryDependencies ++= Seq(guice))
+    .settings(
+      routesGenerator := InjectedRoutesGenerator
+    )
 
 //flywayLocations := Seq("filesystem:port/secondary/database/src/main/resources/db/migration/default")
