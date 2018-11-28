@@ -1,1 +1,1 @@
-GET        /        sample.hn.HomeController.index()
+GET        /        network.cinema.CinemaController.list()

@@ -1,3 +1,5 @@
+import java.util
+
 name := "base_clean"
  
 version := "1.0" 
@@ -87,7 +89,9 @@ lazy val configuration =
     .enablePlugins(PlayScala)
     .dependsOn(
       dataproviders,
-      entrypoints
+      entrypoints,
+      core,
+      util
     )
     .settings(commonSettings)
     .settings(libraryDependencies ++= Seq(guice))
@@ -105,22 +109,18 @@ lazy val dataproviders =
   Project(id = "dataproviders", base = file("application/dataproviders"))
     .settings(commonSettings)
     .settings(dataProvidersSetting)
-    .dependsOn(core)
+    .dependsOn(core, util)
 
 lazy val entrypoints =
   Project(id = "entrypoints", base = file("application/entrypoints"))
     .enablePlugins(PlayScala)
-    .dependsOn(core)
+    .dependsOn(core, util)
     .settings(commonSettings)
     .settings(entryPointsSetting)
 
 lazy val util =
-  (project in file("application/utils"))
+  (project in file("utils"))
     .enablePlugins(PlayScala)
-    .dependsOn(
-      dataproviders,
-      entrypoints
-    )
     .settings(commonSettings)
     .settings(utilSetting)
     .settings(libraryDependencies ++= Seq(guice))
