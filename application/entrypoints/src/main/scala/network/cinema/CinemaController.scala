@@ -2,6 +2,7 @@ package network.cinema
 
 import javax.inject._
 import play.api.mvc._
+import play.api.libs.json._
 import usecase.movie.GetMovieInterface
 
 /**
@@ -17,9 +18,8 @@ class CinemaController @Inject()(cc: ControllerComponents, movieRepository: GetM
    * will be called when the application receives a `GET` request with
    * a path of `/`.
    */
-  def list = Action {
+  def list = Action { implicit request =>
     val movieList = movieRepository.getAll(true)
-    Ok
+    Ok(Json.toJson(movieList)).as("text/json; charset=utf-8")
   }
-
 }

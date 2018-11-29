@@ -65,6 +65,7 @@ import scalariform.formatter.preferences._
 
 lazy val entryPointsSetting = Seq(
   libraryDependencies ++= Seq(
+    "com.typesafe.play" %% "play-json" % "2.6.10"
   )
 )
 

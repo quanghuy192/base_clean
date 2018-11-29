@@ -7,6 +7,8 @@ import org.jsoup.select.Elements
 import usecase.movie.GetMovieInterface
 import utils.DateUtils
 
+import scala.collection.mutable.ListBuffer
+
 class GetMovieByCrawl extends GetMovieInterface {
 
   // Link source
@@ -17,16 +19,13 @@ class GetMovieByCrawl extends GetMovieInterface {
   private var document: Document = _
   private var url: String = _
 
-  // data list
-//  private var movieList: List[Movie] = _
-
-  def setUrlSource(url: String)= {
+  def setUrlSource(url: String) = {
     this.url = url
     document = Jsoup.connect(url).userAgent("Mozilla").get()
   }
 
-  def  getMovieList(isCurrent: Boolean): List[Movie] = {
-    val movieList: List[Movie] = List()
+  def getMovieList(isCurrent: Boolean): List[Movie] = {
+    val movieList: ListBuffer[Movie] = new ListBuffer[Movie]
     if (isCurrent) {
       setUrlSource(CURRENT_MOVIE_URL)
     } else {
@@ -34,20 +33,19 @@ class GetMovieByCrawl extends GetMovieInterface {
     }
 
     val elementItems: Elements = document.select("div[class=img_item_phim]")
-    print(elementItems)
 
-//    for (e:Element <- elementItems) {
-//      val items: Elements = e.select("a")
-//      for (e1: Element <- items) {
-//        val detailLink: String = e1.attr("href")
-//        val titleContent: String = e1.attr("title")
-//        val imgSource: Elements = e1.select("img")
-//        val img: String = imgSource.attr("src")
-//
-//        solveTitleContent(img, detailLink, titleContent, isCurrent) :: movieList
-//      }
-//    }
-    movieList
+    elementItems.forEach { e: Element =>
+      val items: Elements = e.select("a")
+      items.forEach { e1: Element =>
+        val detailLink: String = e1.attr("href")
+        val titleContent: String = e1.attr("title")
+        val imgSource: Elements = e1.select("img")
+        val img: String = imgSource.attr("src")
+
+         movieList += solveTitleContent(img, detailLink, titleContent, isCurrent)
+      }
+    }
+    movieList.toList
   }
 
   private def solveTitleContent(img: String, detailLink: String, titleContent: String, isCurrent: Boolean): Movie = {
@@ -59,28 +57,26 @@ class GetMovieByCrawl extends GetMovieInterface {
     val elements: Elements = doc.select("span")
 
     if (isCurrent) {
-        val title = elements.get(0).text
-        val _type = elements.get(2).text
-        val time = elements.get(4).text
-        val director = elements.get(6).text
-        val actor = elements.get(8).text
+      val title = elements.get(0).text
+      val _type = elements.get(2).text
+      val time = elements.get(4).text
+      val director = elements.get(6).text
+      val actor = elements.get(8).text
+      val imdbPoint = elements.get(10).text
+      val dayStart = DateUtils.convertDay(elements.get(12).text)
+      val content = elements.get(13).text
 
-        val imdbPoint = elements.get(10).text
-        val dayStart = DateUtils.convertDay(elements.get(12).text)
-        val content = elements.get(13).text
-
-        Movie(title, _type, img, detailLink, time, director, actor, imdbPoint, dayStart, content)
+      Movie(title, _type, img, detailLink, time, director, actor, imdbPoint, dayStart, content)
     } else {
-        val title = elements.get(0).text
-        val _type = elements.get(2).text
-        val time = elements.get(4).text
-        val director = elements.get(6).text
-        val actor = elements.get(8).text
+      val title = elements.get(0).text
+      val _type = elements.get(2).text
+      val time = elements.get(4).text
+      val director = elements.get(6).text
+      val actor = elements.get(8).text
+      val dayStart = DateUtils.convertDay(elements.get(10).text)
+      val content = elements.get(11).text
 
-        val dayStart = DateUtils.convertDay(elements.get(10).text)
-        val content = elements.get(11).text
-
-        Movie(title, _type, img, detailLink, time, director, actor, "0", dayStart, content)
+      Movie(title, _type, img, detailLink, time, director, actor, "0", dayStart, content)
     }
   }
 
