@@ -1,11 +1,11 @@
 package inject
 
 import com.google.inject.AbstractModule
-import network.movie.GetMovieByCrawl
-import usecase.movie.GetMovieInterface
+import crawl.MovieCrawl
+import network.movie.crawl.GetMovieByCrawl
 
 class Module extends AbstractModule {
   override def configure() = {
-    bind(classOf[GetMovieInterface]).toInstance(new GetMovieByCrawl)
+    bind(classOf[MovieCrawl]).toInstance(new GetMovieByCrawl)
   }
 }

@@ -1,10 +1,10 @@
 package database.movie;
 
-import core.entity.Movie;
+import core.entity.movie.Movie;
 import scala.collection.immutable.List;
-import usecase.movie.GetMovieInterface;
+import usecase.movie.MovieOperation;
 
-class GetMovieByCrawl implements GetMovieInterface {
+class GetMovieByCrawl implements MovieOperation {
 
     @Override
     public List<Movie> getAll(boolean isCurrent) {

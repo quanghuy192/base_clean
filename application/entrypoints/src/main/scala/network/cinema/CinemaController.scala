@@ -3,14 +3,14 @@ package network.cinema
 import javax.inject._
 import play.api.mvc._
 import play.api.libs.json._
-import usecase.movie.GetMovieInterface
+import usecase.movie.MovieOperation
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's home page.
  */
 @Singleton
-class CinemaController @Inject()(cc: ControllerComponents, movieRepository: GetMovieInterface) extends AbstractController(cc) {
+class CinemaController @Inject()(cc: ControllerComponents, movieRepository: MovieOperation) extends AbstractController(cc) {
 
   /**
    * Create an Action to render an HTML page with a welcome message.

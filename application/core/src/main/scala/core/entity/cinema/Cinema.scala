@@ -1,4 +1,4 @@
-package core.entity
+package core.entity.cinema
 
 case class Cinema(cinemaName: String,
                   address: String,

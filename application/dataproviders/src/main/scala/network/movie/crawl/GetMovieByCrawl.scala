@@ -1,14 +1,14 @@
-package network.movie
+package network.movie.crawl
 
-import core.entity.Movie
+import core.entity.movie.Movie
+import crawl.MovieCrawl
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import usecase.movie.GetMovieInterface
 
 import scala.collection.mutable.ListBuffer
 
-class GetMovieByCrawl extends GetMovieInterface {
+class GetMovieByCrawl extends MovieCrawl {
 
   // Link source
   private val CURRENT_MOVIE_URL: String = "https://www.betacineplex.vn/phim.htm"
