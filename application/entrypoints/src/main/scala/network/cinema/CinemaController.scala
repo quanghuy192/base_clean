@@ -19,7 +19,7 @@ class CinemaController @Inject()(cc: ControllerComponents, movieRepository: GetM
    * a path of `/`.
    */
   def list = Action { implicit request =>
-    val movieList = movieRepository.getAll(false)
+    val movieList = movieRepository.getAll(true)
     Ok(Json.toJson(movieList)).as("text/json; charset=utf-8")
   }
 }

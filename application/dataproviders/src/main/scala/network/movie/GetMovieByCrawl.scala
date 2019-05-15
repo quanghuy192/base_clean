@@ -5,19 +5,19 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import usecase.movie.GetMovieInterface
-import utils.DateUtils
 
 import scala.collection.mutable.ListBuffer
 
 class GetMovieByCrawl extends GetMovieInterface {
 
   // Link source
-  private val CURRENT_MOVIE_URL: String = "http://lichphim.vn/fbapp/lichchieu"
-  private val NEW_MOVIE_URL: String = "http://lichphim.vn/fbapp/sapchieu"
-  private val CINEMA_URL: String = "http://lichphim.vn/fbapp/rapchieu"
+  private val CURRENT_MOVIE_URL: String = "https://www.betacineplex.vn/phim.htm"
+  private val NEW_MOVIE_URL: String = "https://www.betacineplex.vn/phim.htm#tab-2"
+//  private val CINEMA_URL: String = "https://www.cgv.vn/default/cinox/site/"
 
   private var document: Document = _
   private var url: String = _
+  private val BLANK = ""
 
   def setUrlSource(url: String) = {
     this.url = url
@@ -32,53 +32,30 @@ class GetMovieByCrawl extends GetMovieInterface {
       setUrlSource(NEW_MOVIE_URL)
     }
 
-    val elementItems: Elements = document.select("div[class=img_item_phim]")
+    val elementItems: Elements = document.select("div[class=row]")
 
     elementItems.forEach { e: Element =>
-      val items: Elements = e.select("a")
-      items.forEach { e1: Element =>
-        val detailLink: String = e1.attr("href")
-        val titleContent: String = e1.attr("title")
-        val imgSource: Elements = e1.select("img")
-        val img: String = imgSource.attr("src")
+      val general: Elements = e.select("div[class=pi-img-wrapper]")
+      val detail: Elements = e.select("div[class=film-info film-xs-info]")
 
-         movieList += solveTitleContent(img, detailLink, titleContent, isCurrent)
+      if(!general.isEmpty && !detail.isEmpty){
+        if(general.select("div[class=pi-img-wrapper]").size() > 0){
+          val img: String = general.select("img").attr("src")
+          val trailer: String = general.select("a").attr("onclick")
+
+          if(detail.select("h3").size == 1){
+            val title: String = detail.select("h3").text()
+            val elements: Elements = detail.select("li")
+            val _type = elements.get(0).text
+            val format = elements.get(1).text
+            val time = elements.get(2).text
+
+            movieList += Movie(title, _type, img, trailer, time, BLANK, BLANK, BLANK, BLANK, BLANK, format)
+          }
+        }
       }
     }
     movieList.toList
   }
-
-  private def solveTitleContent(img: String, detailLink: String, titleContent: String, isCurrent: Boolean): Movie = {
-
-    // Create document from string
-    val doc: Document = Jsoup.parse(titleContent)
-
-    // Filter span tag
-    val elements: Elements = doc.select("span")
-
-    if (isCurrent) {
-      val title = elements.get(0).text
-      val _type = elements.get(2).text
-      val time = elements.get(4).text
-      val director = elements.get(6).text
-      val actor = elements.get(8).text
-      val imdbPoint = elements.get(10).text
-      val dayStart = DateUtils.convertDay(elements.get(12).text)
-      val content = elements.get(13).text
-
-      Movie(title, _type, img, detailLink, time, director, actor, imdbPoint, dayStart, content)
-    } else {
-      val title = elements.get(0).text
-      val _type = elements.get(2).text
-      val time = elements.get(4).text
-      val director = elements.get(6).text
-      val actor = elements.get(8).text
-      val dayStart = DateUtils.convertDay(elements.get(10).text)
-      val content = elements.get(11).text
-
-      Movie(title, _type, img, detailLink, time, director, actor, "0", dayStart, content)
-    }
-  }
-
   override def getAll(isCurrent: Boolean): List[Movie] = getMovieList(isCurrent)
 }

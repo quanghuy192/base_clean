@@ -1,19 +1,19 @@
 import java.util
 
 name := "base_clean"
- 
-version := "1.0" 
-      
+
+version := "1.0"
+
 lazy val `base_clean` = (project in file(".")).enablePlugins(PlayScala)
-                                              .aggregate(configuration, core, dataproviders, entrypoints)
-                                              .dependsOn(configuration)
+  .aggregate(configuration, core, dataproviders, entrypoints)
+  .dependsOn(configuration)
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
 scalaVersion := "2.12.2"
-libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice )
+libraryDependencies ++= Seq(jdbc, ehcache, ws, specs2 % Test, guice)
 
-unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
+unmanagedResourceDirectories in Test <+= baseDirectory(_ / "target/web/public/test")
 
 lazy val commonSettings = Seq(
   scalaVersion := "2.12.2",
@@ -34,34 +34,15 @@ lazy val commonSettings = Seq(
 
 lazy val dataProvidersSetting = Seq(
   libraryDependencies ++= Seq(
-    "org.skinny-framework" %% "skinny-orm" % "2.3.7",
-    "org.flywaydb" %% "flyway-play" % "4.0.0",
+    "org.skinny-framework" %% "skinny-orm" % "3.0.0",
+    "org.flywaydb" %% "flyway-play" % "5.3.2",
     "mysql" % "mysql-connector-java" % "5.1.44",
     "org.scalikejdbc" %% "scalikejdbc" % "3.0.2",
     "org.scalikejdbc" %% "scalikejdbc-config" % "3.0.2",
     "org.scalikejdbc" %% "scalikejdbc-play-initializer" % "2.6.0-scalikejdbc-3.0"
-  ),
-  initialCommands :=
-    """
-import scalikejdbc._
-import skinny.orm._, feature._
-import org.joda.time._
-skinny.DBSettings.initialize()
-implicit val session = AutoSession
-
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
-import scalariform.formatter.preferences._
-
-|val preferences =
- |  ScalariformKeys.preferences := ScalariformKeys.preferences.value
- |    .setPreference(AlignSingleLineCaseStatements, true)
- |    .setPreference(DoubleIndentConstructorArguments, true)
- |    .setPreference(DanglingCloseParenthesis, Preserve)
- |
- |    scalariformSettingsWithIt(autoformat = true)
- |    Seq(preferences)
-"""
+  )
 )
+
 
 lazy val entryPointsSetting = Seq(
   libraryDependencies ++= Seq(
@@ -73,9 +54,9 @@ lazy val coreSetting = Seq(
   libraryDependencies ++= Seq(
     "org.skinny-framework" %% "skinny-orm" % "2.3.7",
     "org.flywaydb" %% "flyway-play" % "4.0.0",
-    "org.scalikejdbc" %% "scalikejdbc" % "3.0.2",
-    "org.scalikejdbc" %% "scalikejdbc-config" % "3.0.2",
-    "org.scalikejdbc" %% "scalikejdbc-play-initializer" % "2.6.0-scalikejdbc-3.0",
+    "org.scalikejdbc" %% "scalikejdbc" % "3.3.2",
+    "org.scalikejdbc" %% "scalikejdbc-config" % "3.3.2",
+    "org.scalikejdbc" %% "scalikejdbc-play-initializer" % "2.7.0-scalikejdbc-3.3",
     "org.apache.commons" % "commons-csv" % "1.4"
   )
 )
@@ -129,4 +110,4 @@ lazy val util =
       routesGenerator := InjectedRoutesGenerator
     )
 
-//flywayLocations := Seq("filesystem:port/secondary/database/src/main/resources/db/migration/default")
+//flywayLocations := Seq("filesystem:port/secondary/database/src/main/resources/db/migration/db.migration.default")
