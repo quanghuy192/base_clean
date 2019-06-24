@@ -1,6 +1,8 @@
 package core.entity.movie
 
-case class MovieId(value: Long)
+import base.models.Identifier
+
+case class MovieId(value: Long) extends Identifier[Long]
 
 object MovieId {
 }

@@ -1,7 +1,16 @@
 package core.entity.cinema
 
-case class Cinema(cinemaName: String,
-                  address: String,
-                  ggMap: String,
-                  phoneNumber: Int,
-                  id: Int)
+import java.time.LocalDateTime
+import base.models.Entity
+
+trait Cinema extends Entity[CinemaId] with CinemaField
+
+object Cinema {
+  def apply(identifier: CinemaId, cinemaName: String,
+            address: String,
+            ggMap: String,
+            phoneNumber: Int,
+            idIndex: Int, crawledAt: Option[LocalDateTime],
+            createdAt: Option[LocalDateTime],
+            updatedAt: Option[LocalDateTime]): Cinema = CinemaImpl(identifier, cinemaName, address, ggMap, phoneNumber, idIndex, crawledAt, createdAt, updatedAt)
+}
