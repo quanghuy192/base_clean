@@ -32,6 +32,7 @@ trait RepositoryOnJDBC[Identifier <: IdentifierBase[_], Fields <: FieldsBase, En
           case MysqlErrorNumbers.ER_DUP_ENTRY => Failure(new EntityDuplicateException(e.getMessage, e))
           case _ => Failure(e)
         }
+      case e: Exception => throw e
     }
   }
 }

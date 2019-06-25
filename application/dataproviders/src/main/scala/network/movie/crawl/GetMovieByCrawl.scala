@@ -1,6 +1,8 @@
 package network.movie.crawl
 
-import core.entity.movie.Movie
+import java.time.LocalDateTime
+
+import core.entity.movie.{Movie, MovieId}
 import crawl.MovieCrawl
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -33,6 +35,7 @@ class GetMovieByCrawl extends MovieCrawl {
     }
 
     val elementItems: Elements = document.select("div[class=row]")
+    val r = scala.util.Random
 
     elementItems.forEach { e: Element =>
       val general: Elements = e.select("div[class=pi-img-wrapper]")
@@ -50,7 +53,7 @@ class GetMovieByCrawl extends MovieCrawl {
             val format = elements.get(1).text
             val time = elements.get(2).text
 
-            movieList += Movie(title, _type, img, trailer, time, BLANK, BLANK, BLANK, BLANK, BLANK, format)
+            movieList += Movie(MovieId(r.nextInt(10000)), title, _type, img, trailer, time, BLANK, BLANK, BLANK, BLANK, BLANK, format, Some(LocalDateTime.now), Some(LocalDateTime.now), Some(LocalDateTime.now))
           }
         }
       }
